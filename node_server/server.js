@@ -1,6 +1,23 @@
 const WebSocket = require("ws");
 const express = require("express");
 const moment = require("moment");
+const mongoose = require("mongoose");
+
+// Connect to MongoDB
+mongoose.connect("mongodb://127.0.0.1/chat", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Define message schema and model
+const messageSchema = new mongoose.Schema({
+  cmd: String,
+  userid: String,
+  msgtext: String,
+  timestamp: String,
+});
+const Message = mongoose.model("Message", messageSchema);
+
 const app = express();
 const port = 8000; //port for https
 
@@ -9,8 +26,9 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://127.0.0.1:${port}`);
 });
+
 var webSockets = {};
 
 const wss = new WebSocket.Server({ port: 6060 }); //run websocket server with port 6060
@@ -20,7 +38,7 @@ wss.on("connection", function (ws, req) {
 
   console.log("User " + userID + " Connected ");
 
-  ws.on("message", (message) => {
+  ws.on("message", async (message) => {
     //if there is any message
     console.log(message);
     var datastring = message.toString();
@@ -41,6 +59,15 @@ wss.on("connection", function (ws, req) {
               "'}";
             boardws.send(cdata); //send message to reciever
             ws.send(data.cmd + ":success");
+
+            // Save message to database
+            const message = new Message({
+              cmd: data.cmd,
+              userid: data.userid,
+              msgtext: data.msgtext,
+              timestamp: moment().format(),
+            });
+            await message.save();
           } else {
             console.log("No receiver user found.");
             ws.send(data.cmd + ":error");
