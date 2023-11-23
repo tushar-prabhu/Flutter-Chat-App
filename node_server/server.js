@@ -2,10 +2,10 @@ const WebSocket = require("ws");
 const express = require("express");
 const moment = require("moment");
 const app = express();
-const port = 7878; //port for https
+const port = 8000; //port for https
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Express server is running");
 });
 
 app.listen(port, () => {
@@ -27,7 +27,7 @@ wss.on("connection", function (ws, req) {
     if (datastring.charAt(0) == "{") {
       datastring = datastring.replace(/\'/g, '"');
       var data = JSON.parse(datastring);
-      if (data.auth == "chatapphdfgjd34534hjdfk") {
+      if (data.auth == "addauthkeyifrequired") {
         if (data.cmd == "send") {
           var boardws = webSockets[data.userid]; //check if there is reciever connection
           if (boardws) {
@@ -42,7 +42,7 @@ wss.on("connection", function (ws, req) {
             boardws.send(cdata); //send message to reciever
             ws.send(data.cmd + ":success");
           } else {
-            console.log("No reciever user found.");
+            console.log("No receiver user found.");
             ws.send(data.cmd + ":error");
           }
         } else {
@@ -50,7 +50,7 @@ wss.on("connection", function (ws, req) {
           ws.send(data.cmd + ":error");
         }
       } else {
-        console.log("App Authincation error");
+        console.log("App Authentication error");
         ws.send(data.cmd + ":error");
       }
     } else {
@@ -61,9 +61,9 @@ wss.on("connection", function (ws, req) {
 
   ws.on("close", function () {
     var userID = req.url.substr(1);
-    delete webSockets[userID]; //on connection close, remove reciver from connection list
+    delete webSockets[userID]; //on connection close, remove receiver from connection list
     console.log("User Disconnected: " + userID);
   });
 
-  ws.send("connected"); //innitial connection return message
+  ws.send("connected"); //initial connection return message
 });
