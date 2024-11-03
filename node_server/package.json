@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "mocha": "^10.2.0",
     "moment": "^2.29.4",
     "ws": "^8.17.1",
