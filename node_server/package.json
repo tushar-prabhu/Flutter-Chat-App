@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "express": "^4.21.1",
-    "mocha": "^10.2.0",
+    "mocha": "^10.8.2",
     "moment": "^2.29.4",
     "ws": "^8.17.1",
     "mongoose": "^8.0.1"
